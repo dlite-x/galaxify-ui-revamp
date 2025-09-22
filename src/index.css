@@ -2,41 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Space Strategy Game Design System - Dark Futuristic Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Deep space backgrounds */
+    --background: 222 84% 2.5%;
+    --foreground: 210 40% 98%;
+    --surface: 225 25% 8%;
+    --surface-elevated: 225 25% 12%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Game UI panels */
+    --card: 225 25% 8%;
+    --card-foreground: 210 40% 98%;
+    --panel: 225 25% 10%;
+    --panel-border: 225 25% 20%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Interactive elements */
+    --popover: 225 25% 12%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 222.2 47.4% 11.2%;
+    /* Brand colors - Space blue/cyan theme */
+    --primary: 199 89% 48%;
     --primary-foreground: 210 40% 98%;
+    --primary-glow: 199 89% 65%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary actions */
+    --secondary: 225 25% 15%;
+    --secondary-foreground: 210 40% 90%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted elements */
+    --muted: 225 25% 12%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Orange for resources/alerts */
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 84% 4.9%;
 
-    --destructive: 0 84.2% 60.2%;
+    /* Status colors */
+    --success: 142 76% 36%;
+    --success-foreground: 210 40% 98%;
+    
+    --warning: 262 83% 58%;
+    --warning-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders and inputs */
+    --border: 225 25% 20%;
+    --input: 225 25% 15%;
+    --ring: 199 89% 48%;
 
-    --radius: 0.5rem;
+    /* Resources */
+    --resource-credits: 38 92% 50%;
+    --resource-crystal: 199 89% 65%;
+    --resource-antimatter: 262 83% 58%;
+    --resource-energy: 142 76% 50%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(199 89% 48%), hsl(199 89% 65%));
+    --gradient-surface: linear-gradient(135deg, hsl(225 25% 8%), hsl(225 25% 12%));
+    --gradient-glow: radial-gradient(circle, hsl(199 89% 48% / 0.1), transparent);
+
+    /* Shadows */
+    --shadow-panel: 0 8px 32px hsl(222 84% 2.5% / 0.8);
+    --shadow-glow: 0 0 20px hsl(199 89% 48% / 0.3);
+    --shadow-resource: 0 0 12px;
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +134,37 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  /* Game UI Components */
+  .game-panel {
+    @apply bg-gradient-to-br from-card to-muted border border-border rounded-lg shadow-[var(--shadow-panel)] backdrop-blur-sm;
+  }
+  
+  .resource-indicator {
+    @apply flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface/50 border border-border/50 transition-all duration-200;
+  }
+  
+  .resource-indicator:hover {
+    @apply bg-surface border-border shadow-[var(--shadow-resource)];
+  }
+  
+  .game-button {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95;
+  }
+  
+  .game-button-primary {
+    @apply game-button bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-[var(--shadow-glow)] hover:shadow-[0_0_30px_hsl(199_89%_48%_/_0.4)];
+  }
+  
+  .game-button-secondary {
+    @apply game-button bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80;
+  }
+  
+  .planet-node {
+    @apply w-8 h-8 rounded-full border-2 border-primary shadow-[0_0_10px_hsl(199_89%_48%_/_0.6)] cursor-pointer transition-all duration-200 hover:scale-110;
   }
 }
