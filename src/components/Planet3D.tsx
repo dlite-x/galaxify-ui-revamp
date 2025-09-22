@@ -35,36 +35,36 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
       case "earth":
         return (
           <meshPhongMaterial
-            color="#2563eb" // Earth blue oceans
+            color="#1e40af" // Deep blue oceans
             emissive="#0f172a"
             shininess={100}
-            specular="#87CEEB"
+            specular="#60a5fa"
           />
         );
       case "colonized":
         return (
           <meshPhongMaterial
-            color="#dc2626" // Mars red
-            emissive="#451a03"  
-            shininess={20}
+            color="#dc2626" // Mars red-orange
+            emissive="#7f1d1d"  
+            shininess={30}
             specular="#f87171"
           />
         );
       case "unexplored":
         return (
           <meshPhongMaterial
-            color="#9ca3af" // Moon gray
+            color="#6b7280" // Moon gray
             emissive="#1f2937"
-            shininess={5}
-            specular="#d1d5db"
+            shininess={10}
+            specular="#9ca3af"
           />
         );
       case "hostile":
         return (
           <meshPhongMaterial
-            color="#f59e0b" // Jupiter golden
+            color="#f59e0b" // Jupiter amber/gold
             emissive="#92400e"
-            shininess={80}
+            shininess={60}
             specular="#fbbf24"
           />
         );
@@ -93,7 +93,7 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
       {/* Main Planet Body */}
       <Sphere
         ref={meshRef}
-        args={[size, 64, 64]}
+        args={[size, 32, 32]}
         onClick={onClick}
         onPointerOver={(e) => {
           e.stopPropagation();
@@ -106,94 +106,27 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
         {getPlanetMaterial()}
       </Sphere>
 
-      {/* Earth - Green continents visible on surface */}
+      {/* Simple atmospheric glow only */}
       {planetType === "earth" && (
-        <>
-          {/* Continental landmasses */}
-          <Sphere args={[size * 1.002, 32, 32]}>
-            <meshPhongMaterial
-              color="#16a34a"
-              transparent
-              opacity={0.7}
-              emissive="#052e16"
-            />
-          </Sphere>
-          {/* White cloud swirls */}
-          <Sphere ref={atmosphereRef} args={[size * 1.008, 16, 16]}>
-            <meshBasicMaterial
-              color="#ffffff"
-              transparent
-              opacity={0.4}
-            />
-          </Sphere>
-          {/* Blue atmosphere glow */}
-          <Sphere args={[size * 1.15, 32, 32]}>
-            <meshBasicMaterial
-              color="#3b82f6"
-              transparent
-              opacity={0.15}
-              side={THREE.BackSide}
-            />
-          </Sphere>
-        </>
-      )}
-
-      {/* Mars - Polar ice caps and dust storms */}
-      {planetType === "colonized" && (
-        <>
-          {/* White polar caps */}
-          <Sphere args={[size * 1.003, 32, 32]}>
-            <meshPhongMaterial
-              color="#f1f5f9"
-              transparent
-              opacity={0.6}
-            />
-          </Sphere>
-          {/* Dusty atmosphere */}
-          <Sphere args={[size * 1.08, 32, 32]}>
-            <meshBasicMaterial
-              color="#f59e0b"
-              transparent
-              opacity={0.1}
-              side={THREE.BackSide}
-            />
-          </Sphere>
-        </>
-      )}
-
-      {/* Moon - Dark crater spots */}
-      {planetType === "unexplored" && (
-        <Sphere args={[size * 1.002, 32, 32]}>
-          <meshPhongMaterial
-            color="#4b5563"
+        <Sphere args={[size * 1.1, 16, 16]}>
+          <meshBasicMaterial
+            color="#3b82f6"
             transparent
-            opacity={0.8}
+            opacity={0.2}
+            side={THREE.BackSide}
           />
         </Sphere>
       )}
 
-      {/* Jupiter - Swirling gas bands and Great Red Spot */}
       {planetType === "hostile" && (
-        <>
-          {/* Dark storm bands */}
-          <Sphere args={[size * 1.004, 32, 32]}>
-            <meshPhongMaterial
-              color="#b91c1c"
-              transparent
-              opacity={0.6}
-              emissive="#450a0a"
-            />
-          </Sphere>
-          {/* Thick gas atmosphere */}
-          <Sphere args={[size * 1.2, 32, 32]}>
-            <meshBasicMaterial
-              color="#fb923c"
-              transparent
-              opacity={0.2}
-              side={THREE.BackSide}
-            />
-          </Sphere>
-        </>
+        <Sphere args={[size * 1.15, 16, 16]}>
+          <meshBasicMaterial
+            color="#f97316"
+            transparent
+            opacity={0.3}
+            side={THREE.BackSide}
+          />
+        </Sphere>
       )}
 
       {/* Selection ring */}
