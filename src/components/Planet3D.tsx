@@ -14,6 +14,7 @@ interface Planet3DProps {
 export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }: Planet3DProps) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
+  const atmosphereRef = useRef<THREE.Mesh>(null);
 
   // Animate rotation
   useFrame((state, delta) => {
@@ -24,57 +25,48 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
     if (selected && ringRef.current) {
       ringRef.current.rotation.z += delta * 2; // Spin selection ring
     }
+    if (atmosphereRef.current) {
+      atmosphereRef.current.rotation.y += delta * 0.2; // Slow atmosphere drift
+    }
   });
 
   const getPlanetMaterial = () => {
     switch (planetType) {
       case "earth":
         return (
-          <>
-            {/* Earth base surface with continents */}
-            <meshPhongMaterial
-              color="#1e3a8a" // Deep ocean blue
-              emissive="#0f172a"
-              shininess={100}
-              specular="#87CEEB"
-            />
-          </>
+          <meshPhongMaterial
+            color="#2563eb" // Earth blue oceans
+            emissive="#0f172a"
+            shininess={100}
+            specular="#87CEEB"
+          />
         );
       case "colonized":
         return (
-          <>
-            {/* Mars with polar ice caps and surface variations */}
-            <meshPhongMaterial
-              color="#b91c1c" // Mars red
-              emissive="#451a03"  
-              shininess={20}
-              specular="#dc2626"
-            />
-          </>
+          <meshPhongMaterial
+            color="#dc2626" // Mars red
+            emissive="#451a03"  
+            shininess={20}
+            specular="#f87171"
+          />
         );
       case "unexplored":
         return (
-          <>
-            {/* Moon with crater textures */}
-            <meshPhongMaterial
-              color="#9ca3af" // Moon gray
-              emissive="#1f2937"
-              shininess={5}
-              specular="#d1d5db"
-            />
-          </>
+          <meshPhongMaterial
+            color="#9ca3af" // Moon gray
+            emissive="#1f2937"
+            shininess={5}
+            specular="#d1d5db"
+          />
         );
       case "hostile":
         return (
-          <>
-            {/* Jupiter with gas bands */}
-            <meshPhongMaterial
-              color="#d97706" // Jupiter orange
-              emissive="#92400e"
-              shininess={80}
-              specular="#fbbf24"
-            />
-          </>
+          <meshPhongMaterial
+            color="#f59e0b" // Jupiter golden
+            emissive="#92400e"
+            shininess={80}
+            specular="#fbbf24"
+          />
         );
       default:
         return <meshBasicMaterial color="#888888" />;
@@ -98,10 +90,10 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
 
   return (
     <group position={position}>
-      {/* Planet core with realistic surface */}
+      {/* Main Planet Body */}
       <Sphere
         ref={meshRef}
-        args={[size, 64, 64]} // Higher resolution for detail
+        args={[size, 64, 64]}
         onClick={onClick}
         onPointerOver={(e) => {
           e.stopPropagation();
@@ -114,127 +106,90 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
         {getPlanetMaterial()}
       </Sphere>
 
-      {/* Earth continents overlay */}
+      {/* Earth - Green continents visible on surface */}
       {planetType === "earth" && (
         <>
-          {/* Green continents */}
-          <Sphere args={[size * 1.001, 64, 64]}>
+          {/* Continental landmasses */}
+          <Sphere args={[size * 1.002, 32, 32]}>
             <meshPhongMaterial
               color="#16a34a"
               transparent
-              opacity={0.6}
+              opacity={0.7}
               emissive="#052e16"
             />
           </Sphere>
-          {/* Cloud layer */}
-          <Sphere args={[size * 1.02, 32, 32]}>
+          {/* White cloud swirls */}
+          <Sphere ref={atmosphereRef} args={[size * 1.008, 16, 16]}>
             <meshBasicMaterial
               color="#ffffff"
               transparent
-              opacity={0.15}
+              opacity={0.4}
             />
           </Sphere>
-        </>
-      )}
-
-      {/* Mars dust storms and polar caps */}
-      {planetType === "colonized" && (
-        <>
-          {/* Polar ice caps */}
-          <Sphere args={[size * 1.001, 32, 32]}>
-            <meshPhongMaterial
-              color="#f8fafc"
-              transparent
-              opacity={0.3}
-            />
-          </Sphere>
-          {/* Dust layer */}
-          <Sphere args={[size * 1.005, 32, 32]}>
-            <meshBasicMaterial
-              color="#fbbf24"
-              transparent
-              opacity={0.1}
-            />
-          </Sphere>
-        </>
-      )}
-
-      {/* Moon crater details */}
-      {planetType === "unexplored" && (
-        <Sphere args={[size * 1.001, 64, 64]}>
-          <meshPhongMaterial
-            color="#6b7280"
-            transparent
-            opacity={0.4}
-          />
-        </Sphere>
-      )}
-
-      {/* Jupiter's Great Red Spot and bands */}
-      {planetType === "hostile" && (
-        <>
-          {/* Gas bands */}
-          <Sphere args={[size * 1.001, 64, 64]}>
-            <meshPhongMaterial
-              color="#ef4444"
-              transparent
-              opacity={0.3}
-              emissive="#7f1d1d"
-            />
-          </Sphere>
-          {/* Storm systems */}
-          <Sphere args={[size * 1.005, 32, 32]}>
-            <meshBasicMaterial
-              color="#fcd34d"
-              transparent
-              opacity={0.2}
-            />
-          </Sphere>
-        </>
-      )}
-
-      {/* Realistic atmospheric layers */}
-      {planetType === "earth" && (
-        <Sphere args={[size * 1.12, 32, 32]}>
-          <meshBasicMaterial
-            color="#60a5fa"
-            transparent
-            opacity={0.25}
-            side={THREE.BackSide}
-          />
-        </Sphere>
-      )}
-      
-      {/* Mars' thin CO2 atmosphere */}
-      {planetType === "colonized" && (
-        <Sphere args={[size * 1.06, 32, 32]}>
-          <meshBasicMaterial
-            color="#f59e0b"
-            transparent
-            opacity={0.08}
-            side={THREE.BackSide}
-          />
-        </Sphere>
-      )}
-      
-      {/* Jupiter's massive atmosphere with multiple layers */}
-      {planetType === "hostile" && (
-        <>
-          {/* Inner atmosphere */}
+          {/* Blue atmosphere glow */}
           <Sphere args={[size * 1.15, 32, 32]}>
             <meshBasicMaterial
-              color="#f97316"
+              color="#3b82f6"
               transparent
-              opacity={0.3}
+              opacity={0.15}
               side={THREE.BackSide}
             />
           </Sphere>
-          {/* Outer atmosphere */}
-          <Sphere args={[size * 1.25, 32, 32]}>
+        </>
+      )}
+
+      {/* Mars - Polar ice caps and dust storms */}
+      {planetType === "colonized" && (
+        <>
+          {/* White polar caps */}
+          <Sphere args={[size * 1.003, 32, 32]}>
+            <meshPhongMaterial
+              color="#f1f5f9"
+              transparent
+              opacity={0.6}
+            />
+          </Sphere>
+          {/* Dusty atmosphere */}
+          <Sphere args={[size * 1.08, 32, 32]}>
             <meshBasicMaterial
-              color="#fed7aa"
+              color="#f59e0b"
               transparent
               opacity={0.1}
+              side={THREE.BackSide}
+            />
+          </Sphere>
+        </>
+      )}
+
+      {/* Moon - Dark crater spots */}
+      {planetType === "unexplored" && (
+        <Sphere args={[size * 1.002, 32, 32]}>
+          <meshPhongMaterial
+            color="#4b5563"
+            transparent
+            opacity={0.8}
+          />
+        </Sphere>
+      )}
+
+      {/* Jupiter - Swirling gas bands and Great Red Spot */}
+      {planetType === "hostile" && (
+        <>
+          {/* Dark storm bands */}
+          <Sphere args={[size * 1.004, 32, 32]}>
+            <meshPhongMaterial
+              color="#b91c1c"
+              transparent
+              opacity={0.6}
+              emissive="#450a0a"
+            />
+          </Sphere>
+          {/* Thick gas atmosphere */}
+          <Sphere args={[size * 1.2, 32, 32]}>
+            <meshBasicMaterial
+              color="#fb923c"
+              transparent
+              opacity={0.2}
               side={THREE.BackSide}
             />
           </Sphere>
