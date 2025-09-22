@@ -34,32 +34,34 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
             color="#4A90E2"
             emissive="#001122"
             shininess={100}
-            specular="#ffffff"
+            specular="#87CEEB"
           />
         );
       case "colonized":
         return (
           <meshPhongMaterial
-            color="#E24A4A"
-            emissive="#220011"  
-            shininess={60}
-            specular="#ff6666"
+            color="#CD5C5C"
+            emissive="#331100"  
+            shininess={30}
+            specular="#FF8C69"
           />
         );
       case "unexplored":
         return (
-          <meshBasicMaterial
-            color="#666666"
-            transparent
-            opacity={0.8}
+          <meshPhongMaterial
+            color="#C0C0C0"
+            emissive="#111111"
+            shininess={5}
+            specular="#E5E5E5"
           />
         );
       case "hostile":
         return (
           <meshPhongMaterial
-            color="#8B0000"
-            emissive="#440000"
-            shininess={30}
+            color="#D2691E"
+            emissive="#2D1810"
+            shininess={50}
+            specular="#DAA520"
           />
         );
       default:
@@ -70,11 +72,13 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
   const getAtmosphereColor = () => {
     switch (planetType) {
       case "earth":
-        return "#4A90E2";
+        return "#4169E1"; // Earth's blue atmosphere
       case "colonized":
-        return "#E24A4A";
+        return "#CD853F"; // Mars' thin dusty atmosphere
+      case "unexplored":
+        return "#696969"; // Moon has very faint exosphere
       case "hostile":
-        return "#8B0000";
+        return "#FF8C00"; // Jupiter's thick gas atmosphere
       default:
         return "#666666";
     }
@@ -98,13 +102,37 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
         {getPlanetMaterial()}
       </Sphere>
 
-      {/* Atmosphere glow for habitable planets */}
-      {(planetType === "earth" || planetType === "colonized") && (
+      {/* Planet atmosphere - different for each celestial body */}
+      {planetType === "earth" && (
         <Sphere args={[size * 1.1, 32, 32]}>
           <meshBasicMaterial
             color={getAtmosphereColor()}
             transparent
+            opacity={0.3}
+            side={THREE.BackSide}
+          />
+        </Sphere>
+      )}
+      
+      {/* Mars' thin atmosphere */}
+      {planetType === "colonized" && (
+        <Sphere args={[size * 1.05, 32, 32]}>
+          <meshBasicMaterial
+            color={getAtmosphereColor()}
+            transparent
             opacity={0.1}
+            side={THREE.BackSide}
+          />
+        </Sphere>
+      )}
+      
+      {/* Jupiter's thick gas atmosphere */}
+      {planetType === "hostile" && (
+        <Sphere args={[size * 1.15, 32, 32]}>
+          <meshBasicMaterial
+            color={getAtmosphereColor()}
+            transparent
+            opacity={0.4}
             side={THREE.BackSide}
           />
         </Sphere>

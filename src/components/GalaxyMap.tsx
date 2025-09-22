@@ -17,9 +17,9 @@ interface Planet {
 const planets: Planet[] = [
   { id: "earth", name: "Earth", x: 0, y: 0, z: 0, type: "earth", owner: "player" },
   { id: "mars", name: "Mars", x: 3, y: 1, z: -2, type: "colonized", owner: "player" },
-  { id: "alpha", name: "Alpha Centauri", x: -4, y: 2, z: 1, type: "unexplored" },
-  { id: "beta", name: "Beta System", x: 2, y: -3, z: 2, type: "hostile" },
-  { id: "gamma", name: "Gamma Sector", x: -2, y: -1, z: -3, type: "unexplored" },
+  { id: "moon", name: "Luna (Moon)", x: -4, y: 2, z: 1, type: "unexplored" },
+  { id: "jupiter", name: "Jupiter", x: 2, y: -3, z: 2, type: "hostile" },
+  { id: "europa", name: "Europa", x: -2, y: -1, z: -3, type: "unexplored" },
 ];
 
 interface ShipRoute {
