@@ -1,7 +1,8 @@
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
 import { Planet3D } from "./Planet3D";
+import { Ship3D } from "./Ship3D";
 
 interface Planet {
   id: string;
@@ -21,8 +22,69 @@ const planets: Planet[] = [
   { id: "gamma", name: "Gamma Sector", x: -2, y: -1, z: -3, type: "unexplored" },
 ];
 
+interface ShipRoute {
+  id: string;
+  startPlanet: Planet;
+  endPlanet: Planet;
+  progress: number;
+  active: boolean;
+}
+
 export const GalaxyMap = () => {
   const [selectedPlanet, setSelectedPlanet] = useState<Planet | null>(null);
+  const [ships, setShips] = useState<ShipRoute[]>([]);
+
+  // Auto-generate some ship routes for demo
+  useEffect(() => {
+    const createShipRoute = () => {
+      const availablePlanets = planets.filter(p => p.type !== "hostile");
+      if (availablePlanets.length < 2) return;
+
+      const start = availablePlanets[Math.floor(Math.random() * availablePlanets.length)];
+      let end = availablePlanets[Math.floor(Math.random() * availablePlanets.length)];
+      while (end.id === start.id) {
+        end = availablePlanets[Math.floor(Math.random() * availablePlanets.length)];
+      }
+
+      const newShip: ShipRoute = {
+        id: `ship-${Date.now()}`,
+        startPlanet: start,
+        endPlanet: end,
+        progress: 0,
+        active: true
+      };
+
+      setShips(prev => [...prev, newShip]);
+
+      // Animate the ship
+      const animateShip = () => {
+        setShips(prev => prev.map(ship => {
+          if (ship.id === newShip.id) {
+            const newProgress = ship.progress + 0.005;
+            if (newProgress >= 1) {
+              return { ...ship, active: false };
+            }
+            return { ...ship, progress: newProgress };
+          }
+          return ship;
+        }));
+      };
+
+      const interval = setInterval(animateShip, 50);
+      
+      // Clean up completed ships
+      setTimeout(() => {
+        clearInterval(interval);
+        setShips(prev => prev.filter(ship => ship.id !== newShip.id));
+      }, 20000);
+    };
+
+    // Create a ship every 3 seconds
+    const shipInterval = setInterval(createShipRoute, 3000);
+    createShipRoute(); // Create first ship immediately
+
+    return () => clearInterval(shipInterval);
+  }, []);
 
   return (
     <div className="relative w-full h-full bg-gradient-to-br from-background via-surface to-background overflow-hidden">
@@ -49,6 +111,19 @@ export const GalaxyMap = () => {
               size={planet.type === "earth" ? 0.4 : 0.3}
               onClick={() => setSelectedPlanet(planet)}
               selected={selectedPlanet?.id === planet.id}
+            />
+          ))}
+
+          {/* Ships */}
+          {ships.filter(ship => ship.active).map((ship) => (
+            <Ship3D
+              key={ship.id}
+              startPosition={[ship.startPlanet.x, ship.startPlanet.y, ship.startPlanet.z]}
+              endPosition={[ship.endPlanet.x, ship.endPlanet.y, ship.endPlanet.z]}
+              progress={ship.progress}
+              onComplete={() => {
+                setShips(prev => prev.filter(s => s.id !== ship.id));
+              }}
             />
           ))}
 
