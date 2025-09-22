@@ -1,0 +1,139 @@
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Sphere } from "@react-three/drei";
+import * as THREE from "three";
+
+interface Planet3DProps {
+  planetType: "earth" | "colonized" | "unexplored" | "hostile";
+  position: [number, number, number];
+  size?: number;
+  onClick?: () => void;
+  selected?: boolean;
+}
+
+export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }: Planet3DProps) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const ringRef = useRef<THREE.Mesh>(null);
+
+  // Animate rotation
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += delta * 0.5; // Spin on Y axis
+      meshRef.current.rotation.x += delta * 0.1; // Slight wobble
+    }
+    if (selected && ringRef.current) {
+      ringRef.current.rotation.z += delta * 2; // Spin selection ring
+    }
+  });
+
+  const getPlanetMaterial = () => {
+    switch (planetType) {
+      case "earth":
+        return (
+          <meshPhongMaterial
+            color="#4A90E2"
+            emissive="#001122"
+            shininess={100}
+            specular="#ffffff"
+          />
+        );
+      case "colonized":
+        return (
+          <meshPhongMaterial
+            color="#E24A4A"
+            emissive="#220011"  
+            shininess={60}
+            specular="#ff6666"
+          />
+        );
+      case "unexplored":
+        return (
+          <meshBasicMaterial
+            color="#666666"
+            transparent
+            opacity={0.8}
+          />
+        );
+      case "hostile":
+        return (
+          <meshPhongMaterial
+            color="#8B0000"
+            emissive="#440000"
+            shininess={30}
+          />
+        );
+      default:
+        return <meshBasicMaterial color="#888888" />;
+    }
+  };
+
+  const getAtmosphereColor = () => {
+    switch (planetType) {
+      case "earth":
+        return "#4A90E2";
+      case "colonized":
+        return "#E24A4A";
+      case "hostile":
+        return "#8B0000";
+      default:
+        return "#666666";
+    }
+  };
+
+  return (
+    <group position={position}>
+      {/* Planet */}
+      <Sphere
+        ref={meshRef}
+        args={[size, 32, 32]}
+        onClick={onClick}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerOut={() => {
+          document.body.style.cursor = 'auto';
+        }}
+      >
+        {getPlanetMaterial()}
+      </Sphere>
+
+      {/* Atmosphere glow for habitable planets */}
+      {(planetType === "earth" || planetType === "colonized") && (
+        <Sphere args={[size * 1.1, 32, 32]}>
+          <meshBasicMaterial
+            color={getAtmosphereColor()}
+            transparent
+            opacity={0.1}
+            side={THREE.BackSide}
+          />
+        </Sphere>
+      )}
+
+      {/* Selection ring */}
+      {selected && (
+        <mesh ref={ringRef}>
+          <ringGeometry args={[size * 1.3, size * 1.5, 32]} />
+          <meshBasicMaterial
+            color="#4A90E2"
+            transparent
+            opacity={0.8}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      )}
+
+      {/* Subtle orbital ring for colonized planets */}
+      {planetType === "colonized" && (
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[size * 1.4, size * 1.42, 64]} />
+          <meshBasicMaterial
+            color="#4A90E2"
+            transparent
+            opacity={0.3}
+          />
+        </mesh>
+      )}
+    </group>
+  );
+};
