@@ -23,8 +23,9 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
   // Animate rotation
   useFrame((state, delta) => {
     if (meshRef.current && planetType === "earth") {
-      // For Earth, only rotate around Z axis to maintain north pole pointing to +Z
-      meshRef.current.rotation.z += delta * 0.3;
+      // Earth spins around its Z-axis (north-south pole) correctly
+      // Since we rotated the sphere to align north pole with +Z, we rotate around Z
+      meshRef.current.rotation.z += delta * 0.1; // Slower, more realistic Earth rotation
     } else if (meshRef.current) {
       // For other planets, normal rotation
       meshRef.current.rotation.y += delta * 0.5;

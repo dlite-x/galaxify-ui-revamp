@@ -1,8 +1,10 @@
-import { useState, Suspense, useEffect } from "react";
+import { useState, Suspense, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
 import { Planet3D } from "./Planet3D";
 import { Ship3D } from "./Ship3D";
+import { Button } from "./ui/button";
+import { RotateCcw } from "lucide-react";
 
 interface Planet {
   id: string;
@@ -33,6 +35,13 @@ interface ShipRoute {
 export const GalaxyMap = () => {
   const [selectedPlanet, setSelectedPlanet] = useState<Planet | null>(null);
   const [ships, setShips] = useState<ShipRoute[]>([]);
+  const controlsRef = useRef<any>(null);
+
+  const resetView = () => {
+    if (controlsRef.current) {
+      controlsRef.current.reset();
+    }
+  };
 
   // Auto-generate some ship routes for demo
   useEffect(() => {
@@ -129,6 +138,7 @@ export const GalaxyMap = () => {
 
           {/* Orbit controls for camera */}
           <OrbitControls
+            ref={controlsRef}
             enableZoom={true}
             enablePan={true}
             enableRotate={true}
@@ -144,6 +154,19 @@ export const GalaxyMap = () => {
       {/* UI Overlay */}
       <div className="absolute top-4 left-4 text-xs text-muted-foreground bg-surface/80 px-3 py-2 rounded-lg backdrop-blur-sm">
         Click and drag to rotate • Scroll to zoom • Click planets to select
+      </div>
+
+      {/* Reset View Button */}
+      <div className="absolute top-4 right-4">
+        <Button
+          onClick={resetView}
+          variant="outline"
+          size="sm"
+          className="bg-surface/80 backdrop-blur-sm"
+        >
+          <RotateCcw className="w-4 h-4 mr-2" />
+          Reset View
+        </Button>
       </div>
 
       {/* Selection info */}
