@@ -4,7 +4,7 @@ import { OrbitControls, Stars } from "@react-three/drei";
 import { Planet3D } from "./Planet3D";
 import { Ship3D } from "./Ship3D";
 import { Button } from "./ui/button";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Pause, Play } from "lucide-react";
 
 interface Planet {
   id: string;
@@ -35,7 +35,9 @@ interface ShipRoute {
 export const GalaxyMap = () => {
   const [selectedPlanet, setSelectedPlanet] = useState<Planet | null>(null);
   const [ships, setShips] = useState<ShipRoute[]>([]);
+  const [shipsEnabled, setShipsEnabled] = useState<boolean>(true);
   const controlsRef = useRef<any>(null);
+  const shipIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const resetView = () => {
     if (controlsRef.current) {
@@ -46,6 +48,8 @@ export const GalaxyMap = () => {
   // Auto-generate some ship routes for demo
   useEffect(() => {
     const createShipRoute = () => {
+      if (!shipsEnabled) return;
+      
       const availablePlanets = planets.filter(p => p.type !== "hostile");
       if (availablePlanets.length < 2) return;
 
@@ -88,12 +92,23 @@ export const GalaxyMap = () => {
       }, 20000);
     };
 
-    // Create a ship every 3 seconds
-    const shipInterval = setInterval(createShipRoute, 3000);
-    createShipRoute(); // Create first ship immediately
+    if (shipsEnabled) {
+      // Create a ship every 3 seconds
+      shipIntervalRef.current = setInterval(createShipRoute, 3000);
+      createShipRoute(); // Create first ship immediately
+    } else {
+      if (shipIntervalRef.current) {
+        clearInterval(shipIntervalRef.current);
+        shipIntervalRef.current = null;
+      }
+    }
 
-    return () => clearInterval(shipInterval);
-  }, []);
+    return () => {
+      if (shipIntervalRef.current) {
+        clearInterval(shipIntervalRef.current);
+      }
+    };
+  }, [shipsEnabled]);
 
   return (
     <div className="relative w-full h-full bg-gradient-to-br from-background via-surface to-background overflow-hidden">
@@ -156,8 +171,17 @@ export const GalaxyMap = () => {
         Click and drag to rotate • Scroll to zoom • Click planets to select
       </div>
 
-      {/* Reset View Button */}
-      <div className="absolute top-4 right-4">
+      {/* Control Buttons */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        <Button
+          onClick={() => setShipsEnabled(!shipsEnabled)}
+          variant="outline"
+          size="sm"
+          className="bg-surface/80 backdrop-blur-sm"
+        >
+          {shipsEnabled ? <Pause className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
+          {shipsEnabled ? "Stop Ships" : "Start Ships"}
+        </Button>
         <Button
           onClick={resetView}
           variant="outline"
