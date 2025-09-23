@@ -66,6 +66,16 @@ export const Ship3D = ({ startPosition, endPosition, progress, onComplete }: Shi
         <sphereGeometry args={[0.02, 6, 6]} />
         <meshBasicMaterial color="#ff6600" transparent opacity={0.7} />
       </mesh>
+      
+      {/* Simple engine trail spheres */}
+      <mesh position={[0, 0, -0.15]}>
+        <sphereGeometry args={[0.015, 6, 6]} />
+        <meshBasicMaterial color="#ff3300" transparent opacity={0.5} />
+      </mesh>
+      <mesh position={[0, 0, -0.2]}>
+        <sphereGeometry args={[0.01, 6, 6]} />
+        <meshBasicMaterial color="#ff1100" transparent opacity={0.3} />
+      </mesh>
     </group>
   );
 };
