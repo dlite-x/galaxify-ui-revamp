@@ -1,7 +1,9 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Sphere } from "@react-three/drei";
+import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
+import earthTexture from "../assets/earth-texture.jpg";
 
 interface Planet3DProps {
   planetType: "earth" | "colonized" | "unexplored" | "hostile";
@@ -15,6 +17,9 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
   const meshRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const atmosphereRef = useRef<THREE.Mesh>(null);
+
+  // Load Earth texture
+  const earthMap = useLoader(THREE.TextureLoader, earthTexture);
 
   // Animate rotation - DISABLED for texture testing
   useFrame((state, delta) => {
@@ -35,7 +40,7 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
       case "earth":
         return (
           <meshStandardMaterial
-            color="#4a90e2" // Earth blue
+            map={earthMap}
             roughness={0.3}
             metalness={0.1}
           />
