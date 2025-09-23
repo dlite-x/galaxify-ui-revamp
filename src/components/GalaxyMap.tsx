@@ -118,10 +118,16 @@ export const GalaxyMap = () => {
         className="w-full h-full"
       >
         <Suspense fallback={null}>
-          {/* Lighting */}
-          <ambientLight intensity={0.2} />
-          <directionalLight position={[10, 10, 5]} intensity={1} />
-          <pointLight position={[-10, -10, -10]} color="#4A90E2" intensity={0.5} />
+          {/* Enhanced Lighting System */}
+          <ambientLight intensity={0.35} />
+          <directionalLight
+            position={[5, 5, 5]}
+            intensity={1.5}
+            castShadow
+            shadow-mapSize-width={1024}
+            shadow-mapSize-height={1024}
+          />
+          <pointLight position={[-5, -5, -5]} intensity={0.8} color="#4A90E2" />
 
           {/* Background stars */}
           <Stars radius={300} depth={60} count={1000} factor={7} />
