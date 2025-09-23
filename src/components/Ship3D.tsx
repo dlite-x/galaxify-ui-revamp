@@ -12,7 +12,6 @@ interface Ship3DProps {
 
 export const Ship3D = ({ startPosition, endPosition, progress, onComplete }: Ship3DProps) => {
   const shipRef = useRef<THREE.Group>(null);
-  const trailRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
     if (!shipRef.current) return;
@@ -56,31 +55,17 @@ export const Ship3D = ({ startPosition, endPosition, progress, onComplete }: Shi
 
   return (
     <group ref={shipRef}>
-      {/* Ship body - sleek triangular design */}
+      {/* Simple ship body */}
       <mesh>
-        <coneGeometry args={[0.05, 0.3, 6]} />
-        <meshPhongMaterial color="#00d4ff" emissive="#004455" />
+        <coneGeometry args={[0.04, 0.2, 6]} />
+        <meshPhongMaterial color="#00d4ff" />
       </mesh>
       
-      {/* Ship wings */}
-      <mesh position={[0, 0, -0.1]} rotation={[0, 0, Math.PI / 2]}>
-        <boxGeometry args={[0.15, 0.02, 0.08]} />
-        <meshPhongMaterial color="#0099cc" />
+      {/* Simple engine glow */}
+      <mesh position={[0, 0, -0.1]}>
+        <sphereGeometry args={[0.02, 6, 6]} />
+        <meshBasicMaterial color="#ff6600" transparent opacity={0.7} />
       </mesh>
-      
-      {/* Engine glow */}
-      <mesh position={[0, 0, -0.15]}>
-        <sphereGeometry args={[0.03, 8, 8]} />
-        <meshBasicMaterial color="#ff6600" transparent opacity={0.8} />
-      </mesh>
-      
-      {/* Engine trail */}
-      <group ref={trailRef}>
-        <mesh position={[0, 0, -0.25]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.01, 0.02, 0.2, 8]} />
-          <meshBasicMaterial color="#ff3300" transparent opacity={0.6} />
-        </mesh>
-      </group>
     </group>
   );
 };
