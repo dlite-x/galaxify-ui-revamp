@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Sphere } from "@react-three/drei";
-import { useLoader } from "@react-three/fiber";
+import { Sphere, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import earthTexture from "../assets/earth-texture.jpg";
 
@@ -18,8 +17,8 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
   const ringRef = useRef<THREE.Mesh>(null);
   const atmosphereRef = useRef<THREE.Mesh>(null);
 
-  // Load Earth texture
-  const earthMap = useLoader(THREE.TextureLoader, earthTexture);
+  // Load Earth texture using useTexture from drei
+  const earthMap = useTexture(earthTexture);
 
   // Animate rotation - DISABLED for texture testing
   useFrame((state, delta) => {
