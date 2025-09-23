@@ -57,7 +57,7 @@ export const Ship3D = ({ startPosition, endPosition, progress, onComplete }: Shi
     <group ref={shipRef}>
       {/* Simple ship body */}
       <mesh>
-        <coneGeometry args={[0.04, 0.2, 6]} />
+        <sphereGeometry args={[0.03, 8, 8]} />
         <meshPhongMaterial color="#00d4ff" />
       </mesh>
       
