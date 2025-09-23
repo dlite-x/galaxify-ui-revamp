@@ -20,18 +20,18 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
   // Load Earth texture using useTexture from drei
   const earthMap = useTexture(earthTexture);
 
-  // Animate rotation - DISABLED for texture testing
+  // Animate rotation
   useFrame((state, delta) => {
-    // if (meshRef.current) {
-    //   meshRef.current.rotation.y += delta * 0.5; // Spin on Y axis
-    //   meshRef.current.rotation.x += delta * 0.1; // Slight wobble
-    // }
+    if (meshRef.current) {
+      meshRef.current.rotation.y += delta * 0.5; // Spin on Y axis
+      meshRef.current.rotation.x += delta * 0.1; // Slight wobble
+    }
     if (selected && ringRef.current) {
       ringRef.current.rotation.z += delta * 2; // Spin selection ring
     }
-    // if (atmosphereRef.current) {
-    //   atmosphereRef.current.rotation.y += delta * 0.2; // Slow atmosphere drift
-    // }
+    if (atmosphereRef.current) {
+      atmosphereRef.current.rotation.y += delta * 0.2; // Slow atmosphere drift
+    }
   });
 
   const getPlanetMaterial = () => {
