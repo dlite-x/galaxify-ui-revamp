@@ -22,9 +22,13 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
 
   // Animate rotation
   useFrame((state, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.5; // Spin on Y axis
-      meshRef.current.rotation.x += delta * 0.1; // Slight wobble
+    if (meshRef.current && planetType === "earth") {
+      // For Earth, only rotate around Z axis to maintain north pole pointing to +Z
+      meshRef.current.rotation.z += delta * 0.3;
+    } else if (meshRef.current) {
+      // For other planets, normal rotation
+      meshRef.current.rotation.y += delta * 0.5;
+      meshRef.current.rotation.x += delta * 0.1;
     }
     if (selected && ringRef.current) {
       ringRef.current.rotation.z += delta * 2; // Spin selection ring
@@ -75,10 +79,46 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
 
   return (
     <group position={position}>
-      {/* Single Planet Sphere - No overlapping */}
+      {/* Coordinate System - only for Earth */}
+      {planetType === "earth" && (
+        <group>
+          {/* X axis - Red */}
+          <mesh position={[size * 0.8, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+            <cylinderGeometry args={[0.005, 0.005, size * 0.6, 8]} />
+            <meshBasicMaterial color="#ff0000" />
+          </mesh>
+          <mesh position={[size * 1.1, 0, 0]}>
+            <coneGeometry args={[0.02, 0.08, 8]} />
+            <meshBasicMaterial color="#ff0000" />
+          </mesh>
+          
+          {/* Y axis - Green */}
+          <mesh position={[0, size * 0.8, 0]}>
+            <cylinderGeometry args={[0.005, 0.005, size * 0.6, 8]} />
+            <meshBasicMaterial color="#00ff00" />
+          </mesh>
+          <mesh position={[0, size * 1.1, 0]}>
+            <coneGeometry args={[0.02, 0.08, 8]} />
+            <meshBasicMaterial color="#00ff00" />
+          </mesh>
+          
+          {/* Z axis - Blue */}
+          <mesh position={[0, 0, size * 0.8]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.005, 0.005, size * 0.6, 8]} />
+            <meshBasicMaterial color="#0000ff" />
+          </mesh>
+          <mesh position={[0, 0, size * 1.1]} rotation={[Math.PI / 2, 0, 0]}>
+            <coneGeometry args={[0.02, 0.08, 8]} />
+            <meshBasicMaterial color="#0000ff" />
+          </mesh>
+        </group>
+      )}
+
+      {/* Single Planet Sphere - Properly oriented */}
       <Sphere
         ref={meshRef}
-        args={[size, 32, 32]} // Reduced complexity for clean rendering
+        args={[size, 32, 32]}
+        rotation={planetType === "earth" ? [-Math.PI / 2, 0, 0] : [0, 0, 0]} // Rotate Earth so north pole points to +Z
         onClick={onClick}
         onPointerOver={(e) => {
           e.stopPropagation();
