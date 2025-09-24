@@ -137,11 +137,11 @@ export const Planet3D = ({ planetType, position, size = 0.3, onClick, selected }
       <Sphere
         ref={meshRef}
         args={[
-          planetType === "earth" ? size * 1.2 : size, 
+          planetType === "earth" ? size : size, 
           planetType === "earth" || planetType === "unexplored" ? 64 : 32, 
           planetType === "earth" || planetType === "unexplored" ? 64 : 32
         ]}
-        rotation={planetType === "earth" ? [-Math.PI / 2, 0, 0] : [0, 0, 0]}
+        rotation={planetType === "earth" ? [0, 0, 0] : [0, 0, 0]}
         onClick={onClick}
         onPointerOver={(e) => {
           e.stopPropagation();

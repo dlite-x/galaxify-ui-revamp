@@ -114,7 +114,7 @@ export const GalaxyMap = () => {
     <div className="relative w-full h-full bg-gradient-to-br from-background via-surface to-background overflow-hidden">
       {/* 3D Galaxy Scene */}
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 60 }}
+        camera={{ position: [0, 0, 8], fov: 60, near: 0.1, far: 1000 }}
         className="w-full h-full"
       >
         <Suspense fallback={null}>
