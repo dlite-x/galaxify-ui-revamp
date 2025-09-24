@@ -8,12 +8,6 @@ interface PlanetStats {
   temperature: string;
 }
 
-interface Resource {
-  type: string;
-  amount: number;
-  change: number;
-  icon: React.ComponentType<{ className?: string }>;
-}
 
 const planetStats: PlanetStats = {
   population: "8.0B",
@@ -22,15 +16,14 @@ const planetStats: PlanetStats = {
   temperature: "15.0°C",
 };
 
-const resources: Resource[] = [
-  { type: "Water", amount: 1000, change: 240, icon: Globe },
-  { type: "Oxygen", amount: 4, change: 0, icon: Wind },
-  { type: "Fuel", amount: 200, change: 0, icon: Globe },
-  { type: "Food", amount: 1, change: 60, icon: Globe },
-  { type: "Compute", amount: 1, change: 0, icon: Globe },
-  { type: "Power", amount: 1, change: 0, icon: Globe },
-  { type: "Factories", amount: 5, change: 0, icon: Globe },
-  { type: "Metal", amount: 1, change: 0, icon: Globe },
+const resources = [
+  { type: "credits" as const, amount: 1000, change: 240 },
+  { type: "crystal" as const, amount: 4, change: 0 },
+  { type: "fuel" as const, amount: 200, change: 0 },
+  { type: "food" as const, amount: 1, change: 60 },
+  { type: "antimatter" as const, amount: 1, change: 0 },
+  { type: "power" as const, amount: 1, change: 0 },
+  { type: "metal" as const, amount: 5, change: 0 },
 ];
 
 export const PlanetPanel = () => {
@@ -89,22 +82,12 @@ export const PlanetPanel = () => {
         <h3 className="text-lg font-semibold text-foreground mb-4">Resources</h3>
         <div className="grid grid-cols-2 gap-3">
           {resources.map((resource) => (
-            <div key={resource.type} className="resource-indicator">
-              <resource.icon className="w-4 h-4 text-primary" />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground truncate">
-                    {resource.amount.toLocaleString()}
-                  </span>
-                  {resource.change !== 0 && (
-                    <span className={`text-xs ${resource.change > 0 ? 'text-success' : 'text-destructive'}`}>
-                      {resource.change > 0 ? '+' : ''}{resource.change}
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-muted-foreground">{resource.type}</div>
-              </div>
-            </div>
+            <ResourceIndicator
+              key={resource.type}
+              type={resource.type}
+              value={resource.amount}
+              change={resource.change}
+            />
           ))}
         </div>
       </div>
