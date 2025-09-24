@@ -1,7 +1,7 @@
-import { Coins, Gem, Zap } from "lucide-react";
+import { Coins, Gem, Zap, Hammer, Fuel, Battery, UtensilsCrossed } from "lucide-react";
 
 interface ResourceIndicatorProps {
-  type: "credits" | "crystal" | "antimatter";
+  type: "credits" | "crystal" | "antimatter" | "metal" | "fuel" | "power" | "food";
   value: number;
   change?: number;
 }
@@ -26,6 +26,30 @@ export const ResourceIndicator = ({ type, value, change }: ResourceIndicatorProp
           icon: Zap,
           color: "text-resource-antimatter",
           bgColor: "shadow-resource-antimatter/30",
+        };
+      case "metal":
+        return {
+          icon: Hammer,
+          color: "text-gray-400",
+          bgColor: "shadow-gray-400/30",
+        };
+      case "fuel":
+        return {
+          icon: Fuel,
+          color: "text-orange-400",
+          bgColor: "shadow-orange-400/30",
+        };
+      case "power":
+        return {
+          icon: Battery,
+          color: "text-yellow-400",
+          bgColor: "shadow-yellow-400/30",
+        };
+      case "food":
+        return {
+          icon: UtensilsCrossed,
+          color: "text-green-400",
+          bgColor: "shadow-green-400/30",
         };
       default:
         return {
